@@ -24,8 +24,8 @@ namespace DealOrNoDeal //ctrl + f5 to run
             }
         }
 
-        //Debug function to print out the values of each of the boxes.
-        public void PrintBoxes(ref double[] boxes)
+        //debug function to print out the values of each of the boxes
+        public void PrintBoxes(double[] boxes) 
         {
             string display = "Content of Boxes: \n";
             for(int i = 0; i < boxes.Length; i++)
@@ -38,15 +38,48 @@ namespace DealOrNoDeal //ctrl + f5 to run
             Console.WriteLine(display);
         }
 
-        public void DisplayCurrentGamefloor(ref List<int> floor)
+        //Will return a list of the boxes currently in play on the gamefloor
+        public void DisplayCurrentGamefloor(List<int> floor)
         {
             string display = "Current Gamefloor:\n\n";
             floor.Sort();
             for(int i = 0; i < floor.Count; i++)
             {
-                display += "Case " + floor[i] + "\n";
+                display += "Box " + floor[i] + "\n";
             }
             Console.WriteLine(display);
+        }
+
+        //Will simply format a number so that it looks nicer (i.e. print 1p instead of £0.01)
+        public string FormatValue(double value)
+        {
+            if (value >= 1)
+                return ( "£" + value );
+            else
+                return ( value + "p" );
+        }
+
+        //Display a list of the potential value of the secret box.
+        public void PrintPotentialValues(List<double> potentials)
+        {
+            string display = "Potential values of secret box are as follows: \n";
+            for(int i = 0; i < potentials.Count; i++)
+            {
+                if(potentials[i] >= 1)
+                    display +=  "£" + potentials[i] + "\n";
+                else
+                    display +=  (potentials[i] * 100) + "p\n";
+            }
+            Console.WriteLine(display);
+
+        }
+
+        //Bankers offer is calculed based on the potential value of the secret box
+        public void BankersOffer(ref double offer, List<double> potentials)
+        {
+            double avg = Math.Floor(potentials.Average()); //An average of the potentials of the secret box
+            avg *= 1.15; //offer an amount slightly above the expected value of the box.
+            offer = avg;
         }
 
         //This will be console-based version of the gameshow Deal or No Deal
@@ -65,26 +98,62 @@ namespace DealOrNoDeal //ctrl + f5 to run
 
             //Game Setup
             objRef.FillBoxes(ref boxes);
-            //////debugRef.PrintBoxes(ref boxes);  //@DEBUG
+            //////debugRef.PrintBoxes(boxes);  //@DEBUG
             Random rdn = new Random();  int boxNum = rdn.Next(0, 22); 
             secretBox = boxes[boxNum];//select random box to be the secretBox. (remove this box from the gameFloor, but not from the list of potentials)
             //////Console.WriteLine("Secret Box Value = £" + secretBox);   //@DEBUG
             potentials = new List<double>(){ 0.01,0.1,0.5,1,5,10,50,100,250,500,750,1000,3000,5000,10000,15000,20000,35000,50000,75000,100000,250000};
             gameFloor = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 }; //Just Box numbers.
-            gameFloor.Remove(boxNum); //Remove the secretBox from the gameFloor.
+            gameFloor.Remove(boxNum+1); //Remove the secretBox from the gameFloor.
 
             //Game Time
-            Console.WriteLine("Start of game\n\n");
+            Console.WriteLine("Start of game\n");
             Console.WriteLine("Box number " + (boxNum+1) + " was randomly chosen to be your secret box\n");
-           
-            objRef.DisplayCurrentGamefloor(ref gameFloor);
+
             bool finished = false;
             while (!finished)
             {
-                Console.WriteLine("Please select a case");
-                
+                if(potentials.Count == 2)
+                {
+                    Console.WriteLine("Since there are only two boxes remaining, you have two options: \n" +
+                        "1: accept the banker's previous offer (£" + offer + ")\n" +
+                        "2: open the secret box\n" +
+                        "Select your option: \n");
+                    int opt = Convert.ToInt32(Console.ReadLine());
+                    if (opt == 1)
+                        Console.WriteLine("You have accepted the bankers offer of £" + offer + ", congratulations.");
+                    else
+                        Console.WriteLine("You have rejected the bankers offer and have instead chosen to open the secret box which " +
+                            "contains " + objRef.FormatValue(secretBox) + ", congratulations.");
+                    finished = true;
+                    break;
+                }
+                objRef.DisplayCurrentGamefloor(gameFloor);
+                int selection;
+                while (true) {
+                    Console.WriteLine("Please select a box");
+                    selection = Convert.ToInt32(Console.ReadLine());
+                    if (gameFloor.Contains(selection))
+                        break;
+                    else
+                        Console.WriteLine("Box is not in play on gamefloor");
+                }
+                Console.WriteLine("Box " + selection + " contained: " +  objRef.FormatValue(boxes[selection-1]) + "\n");
+                potentials.Remove(boxes[selection - 1]); //Remove the box from the potential values available
+                gameFloor.Remove(selection);
+
+                objRef.PrintPotentialValues(potentials); //Display list of potential values
+                objRef.BankersOffer(ref offer, potentials); //An offer is made by the banker.
+                Console.WriteLine("The banker has made you an offer of £" + offer + ", would you like to accept it? (y/n)");
+                char answer = Convert.ToChar(Console.ReadLine().ToLower());
+                if (answer == 'y')
+                {
+                    Console.WriteLine("You have accepted the bankers offer of £" + offer + ", congratulations.");
+                    finished = true;
+                } //else nothing.
             }
-            
+
+            Console.WriteLine("\nEnd of game, thank you for playing\n");
         }
     }
 }
