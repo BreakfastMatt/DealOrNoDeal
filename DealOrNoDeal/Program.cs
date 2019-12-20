@@ -56,7 +56,7 @@ namespace DealOrNoDeal //ctrl + f5 to run
             if (value >= 1)
                 return ( "£" + value );
             else
-                return ( value + "p" );
+                return ( (value*100)+ "p" );
         }
 
         //Display a list of the potential value of the secret box.
@@ -74,6 +74,44 @@ namespace DealOrNoDeal //ctrl + f5 to run
 
         }
 
+        //Will simply check if the value entered by the user is an integer.  
+        public void SanitiseInput(ref int selection, string msg)
+        {
+            while (true)
+            {
+                Console.WriteLine(msg);
+                try
+                {
+                    selection = Convert.ToInt32(Console.ReadLine());
+                    break; //if it makes it here then the a valid integer was entered, otherwise it will hit the catch tag.
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Please enter a valid number");
+                }
+            }
+        }
+
+        //Will simply check if the value entered is a valid answer (y or n)
+        public void SanitiseCharInput(ref char answer)
+        {
+            while (true)
+            {
+                try
+                {
+                    answer = Convert.ToChar(Console.ReadLine().ToLower());
+                    if (answer == 'y' ||answer == 'n')
+                        break; //Input is good so break out of loop
+                    else
+                        throw new Exception();
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Please provide a valid answer (y/n)");
+                }
+            }
+        }
+        
         //Bankers offer is calculed based on the potential value of the secret box
         public void BankersOffer(ref double offer, List<double> potentials)
         {
@@ -86,8 +124,6 @@ namespace DealOrNoDeal //ctrl + f5 to run
         static void Main(string[] args) 
         {
             Program objRef = new Program();
-            Program debugRef = new Program();//no reason to do this, but it's easier to see when debugging is done. (will be killed at end, look for: @DEBUG)
-
             //Variables
             double secretBox;  //The Box that is randomly selected to be beside the contestant (contains an unknown amount)
             List<double> potentials; //The potential value of the secretBox (this will be used to determine the bankers offer)  
@@ -97,11 +133,9 @@ namespace DealOrNoDeal //ctrl + f5 to run
             List<int> gameFloor; //This will be the (numbered) boxes left on the gamefloor
 
             //Game Setup
-            objRef.FillBoxes(ref boxes);
-            //////debugRef.PrintBoxes(boxes);  //@DEBUG
+            objRef.FillBoxes(ref boxes); //Fills each box with one of the random prize amounts. (each box contains a different amount)
             Random rdn = new Random();  int boxNum = rdn.Next(0, 22); 
-            secretBox = boxes[boxNum];//select random box to be the secretBox. (remove this box from the gameFloor, but not from the list of potentials)
-            //////Console.WriteLine("Secret Box Value = £" + secretBox);   //@DEBUG
+            secretBox = boxes[boxNum];//select random box to be the secretBox. (remove this box from the gameFloor, but not from the list of potentials
             potentials = new List<double>(){ 0.01,0.1,0.5,1,5,10,50,100,250,500,750,1000,3000,5000,10000,15000,20000,35000,50000,75000,100000,250000};
             gameFloor = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 }; //Just Box numbers.
             gameFloor.Remove(boxNum+1); //Remove the secretBox from the gameFloor.
@@ -129,10 +163,9 @@ namespace DealOrNoDeal //ctrl + f5 to run
                     break;
                 }
                 objRef.DisplayCurrentGamefloor(gameFloor);
-                int selection;
+                int selection = -1;
                 while (true) {
-                    Console.WriteLine("Please select a box");
-                    selection = Convert.ToInt32(Console.ReadLine());
+                    objRef.SanitiseInput(ref selection, "Please select a box"); //ensures that the number entered is an integer.
                     if (gameFloor.Contains(selection))
                         break;
                     else
@@ -145,7 +178,8 @@ namespace DealOrNoDeal //ctrl + f5 to run
                 objRef.PrintPotentialValues(potentials); //Display list of potential values
                 objRef.BankersOffer(ref offer, potentials); //An offer is made by the banker.
                 Console.WriteLine("The banker has made you an offer of £" + offer + ", would you like to accept it? (y/n)");
-                char answer = Convert.ToChar(Console.ReadLine().ToLower());
+                char answer = ' ';
+                objRef.SanitiseCharInput(ref answer); //will make sure that the input is a char and is either a 'y' or 'n'
                 if (answer == 'y')
                 {
                     Console.WriteLine("You have accepted the bankers offer of £" + offer + ", congratulations.");

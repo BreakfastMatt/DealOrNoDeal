@@ -12,3 +12,9 @@ Z:\Users\Matthew\Desktop\GitHub\DealOrNoDeal\DealOrNoDeal\obj\Debug\DealOrNoDeal
 Z:\Users\Matthew\Desktop\GitHub\DealOrNoDeal\DealOrNoDeal\obj\Debug\DealOrNoDeal.csproj.CoreCompileInputs.cache
 Z:\Users\Matthew\Desktop\GitHub\DealOrNoDeal\DealOrNoDeal\obj\Debug\DealOrNoDeal.exe
 Z:\Users\Matthew\Desktop\GitHub\DealOrNoDeal\DealOrNoDeal\obj\Debug\DealOrNoDeal.pdb
+D:\Programming\GitHub Projects\DealOrNoDeal\DealOrNoDeal\bin\Debug\DealOrNoDeal.exe.config
+D:\Programming\GitHub Projects\DealOrNoDeal\DealOrNoDeal\bin\Debug\DealOrNoDeal.exe
+D:\Programming\GitHub Projects\DealOrNoDeal\DealOrNoDeal\bin\Debug\DealOrNoDeal.pdb
+D:\Programming\GitHub Projects\DealOrNoDeal\DealOrNoDeal\obj\Debug\DealOrNoDeal.csprojAssemblyReference.cache
+D:\Programming\GitHub Projects\DealOrNoDeal\DealOrNoDeal\obj\Debug\DealOrNoDeal.exe
+D:\Programming\GitHub Projects\DealOrNoDeal\DealOrNoDeal\obj\Debug\DealOrNoDeal.pdb
